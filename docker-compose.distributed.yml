@@ -9,6 +9,10 @@
 
 name: besu-qbft-distributed
 
+networks:
+  blockscout-net:
+    driver: bridge
+
 volumes:
   node1-data:
   node2-data:
@@ -219,7 +223,7 @@ services:
       retries: 10
       start_period: 20s
 
-  # ── Blockscout Explorer (runs with node1 owner) ──────────
+  # ── Blockscout Backend (runs with node1 owner) ───────────
   blockscout:
     image: ghcr.io/blockscout/blockscout:${BLOCKSCOUT_VERSION:-latest}
     profiles: ["node1"]
@@ -244,7 +248,7 @@ services:
       # ── App ──
       SECRET_KEY_BASE: "c6f4c1f34b9b0e2d4bc01be0ac028b33fc8ead1fcb81f3cf"
       CHECK_ORIGIN: "false"
-      PORT: ${BLOCKSCOUT_PORT:-4000}
+      PORT: ${BLOCKSCOUT_BACKEND_PORT:-4000}
       MIX_ENV: prod
       CHAIN_ID: "1337"
       NETWORK: "Besu Private"
@@ -265,3 +269,54 @@ services:
       timeout: 5s
       retries: 20
       start_period: 2m
+
+  # ── Blockscout Frontend (runs with node1 owner) ──────────
+  blockscout-frontend:
+    image: ghcr.io/blockscout/frontend:${BLOCKSCOUT_FRONTEND_VERSION:-latest}
+    profiles: ["node1"]
+    container_name: blockscout-frontend
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      blockscout:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      NEXT_PUBLIC_API_PROTOCOL: http
+      NEXT_PUBLIC_API_HOST: ${BLOCKSCOUT_PUBLIC_HOST:-localhost}
+      NEXT_PUBLIC_API_PORT: ${BLOCKSCOUT_PUBLIC_PORT:-3000}
+      NEXT_PUBLIC_API_WEBSOCKET_PROTOCOL: ws
+      NEXT_PUBLIC_NETWORK_NAME: "Besu Private"
+      NEXT_PUBLIC_NETWORK_SHORT_NAME: "QBFT Distributed"
+    networks:
+      - blockscout-net
+
+  # ── Browser-facing Blockscout Proxy (runs with node1 owner)
+  blockscout-proxy:
+    image: nginx:${NGINX_VERSION:-1.27-alpine}
+    profiles: ["node1"]
+    container_name: blockscout-proxy
+    restart: unless-stopped
+    depends_on:
+      blockscout:
+        condition: service_healthy
+      blockscout-frontend:
+        condition: service_started
+    environment:
+      PROXY_PORT: 80
+      BACK_PROXY_PASS: http://host.docker.internal:${BLOCKSCOUT_BACKEND_PORT:-4000}
+      FRONT_PROXY_PASS: http://blockscout-frontend:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./config/blockscout-nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
+    ports:
+      - "${BLOCKSCOUT_PORT:-3000}:80"
+    networks:
+      - blockscout-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/api/v2/stats >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 30s

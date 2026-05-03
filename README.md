@@ -75,7 +75,7 @@ docker compose down -v       # stop + hapus semua data (reset total)
 
 | Service                  | URL                   |
 | ------------------------ | --------------------- |
-| **Blockscout Explorer**  | http://localhost:4000 |
+| **Blockscout Explorer**  | http://localhost:3000 |
 | **Node 1 RPC (primary)** | http://localhost:8545 |
 | **Node 2 RPC**           | http://localhost:8547 |
 | **Node 3 RPC**           | http://localhost:8549 |
@@ -162,8 +162,16 @@ docker compose --env-file .env.distributed \
 Blockscout tersedia di mesin Person A:
 
 ```text
-http://localhost:4000
+http://localhost:3000
 ```
+
+Jika dibuka dari perangkat lain lewat IP LAN atau WireGuard, set host publik frontend sebelum menjalankan Compose:
+
+```bash
+BLOCKSCOUT_PUBLIC_HOST=192.168.50.187 docker compose up -d
+```
+
+Untuk mode distributed, isi `BLOCKSCOUT_PUBLIC_HOST` di `.env.distributed` pada mesin yang menjalankan `node1`.
 
 Person B:
 

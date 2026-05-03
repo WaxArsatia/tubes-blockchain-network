@@ -240,7 +240,7 @@ services:
       retries: 10
       start_period: 20s
 
-  # ── Blockscout Explorer ──────────────────────────────────
+  # ── Blockscout Backend ───────────────────────────────────
   blockscout:
     image: ghcr.io/blockscout/blockscout:${BLOCKSCOUT_VERSION:-latest}
     container_name: blockscout
@@ -277,8 +277,6 @@ services:
       POOL_SIZE_API: "10"
       ECTO_NUMBER_OF_MIGRATIONS_LOCK_RETRIES: "60"
     command: sh -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"
-    ports:
-      - "4000:4000"
     networks:
       besu-net:
         ipv4_address: 172.20.0.30
@@ -289,3 +287,52 @@ services:
       timeout: 5s
       retries: 20
       start_period: 2m
+
+  # ── Blockscout Frontend ──────────────────────────────────
+  blockscout-frontend:
+    image: ghcr.io/blockscout/frontend:${BLOCKSCOUT_FRONTEND_VERSION:-latest}
+    container_name: blockscout-frontend
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      blockscout:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      NEXT_PUBLIC_API_PROTOCOL: http
+      NEXT_PUBLIC_API_HOST: ${BLOCKSCOUT_PUBLIC_HOST:-localhost}
+      NEXT_PUBLIC_API_PORT: ${BLOCKSCOUT_PUBLIC_PORT:-3000}
+      NEXT_PUBLIC_API_WEBSOCKET_PROTOCOL: ws
+      NEXT_PUBLIC_NETWORK_NAME: "Besu Private"
+      NEXT_PUBLIC_NETWORK_SHORT_NAME: "QBFT Local"
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.31
+
+  # ── Browser-facing Blockscout Proxy ──────────────────────
+  blockscout-proxy:
+    image: nginx:${NGINX_VERSION:-1.27-alpine}
+    container_name: blockscout-proxy
+    restart: unless-stopped
+    depends_on:
+      blockscout:
+        condition: service_healthy
+      blockscout-frontend:
+        condition: service_started
+    environment:
+      PROXY_PORT: 80
+      BACK_PROXY_PASS: http://blockscout:4000
+      FRONT_PROXY_PASS: http://blockscout-frontend:3000
+    volumes:
+      - ./config/blockscout-nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
+    ports:
+      - "${BLOCKSCOUT_PORT:-3000}:80"
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.32
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/api/v2/stats >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
