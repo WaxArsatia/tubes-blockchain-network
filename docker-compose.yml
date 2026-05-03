@@ -299,12 +299,14 @@ services:
         condition: service_healthy
     environment:
       PORT: 3000
+      NEXT_PUBLIC_APP_HOST: ${BLOCKSCOUT_PUBLIC_HOST:-localhost}
       NEXT_PUBLIC_API_PROTOCOL: http
       NEXT_PUBLIC_API_HOST: ${BLOCKSCOUT_PUBLIC_HOST:-localhost}
       NEXT_PUBLIC_API_PORT: ${BLOCKSCOUT_PUBLIC_PORT:-3000}
       NEXT_PUBLIC_API_WEBSOCKET_PROTOCOL: ws
       NEXT_PUBLIC_NETWORK_NAME: "Besu Private"
       NEXT_PUBLIC_NETWORK_SHORT_NAME: "QBFT Local"
+      NEXT_PUBLIC_NETWORK_ID: "1337"
     networks:
       besu-net:
         ipv4_address: 172.20.0.31
