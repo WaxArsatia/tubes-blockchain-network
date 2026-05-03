@@ -159,19 +159,25 @@ docker compose --env-file .env.distributed \
   --profile node1 --profile node2 up -d
 ```
 
-Blockscout tersedia di mesin Person A:
+Blockscout tersedia di mesin Person A. Default frontend diset untuk domain testing `blockscout.denis.my.id`:
 
 ```text
-http://localhost:3000
+http://blockscout.denis.my.id
 ```
 
-Jika dibuka dari perangkat lain lewat IP LAN atau WireGuard, set host publik frontend sebelum menjalankan Compose:
+Jika dibuka dari perangkat lain lewat IP LAN atau WireGuard dengan IP berbeda, set host publik frontend sebelum menjalankan Compose:
 
 ```bash
-BLOCKSCOUT_PUBLIC_HOST=192.168.50.187 docker compose up -d
+BLOCKSCOUT_FRONTEND_PUBLIC_PROTOCOL=http \
+BLOCKSCOUT_FRONTEND_PUBLIC_HOST=<ip-host-node1> \
+BLOCKSCOUT_FRONTEND_PUBLIC_PORT=3000 \
+BLOCKSCOUT_FRONTEND_PUBLIC_WS_PROTOCOL=ws \
+docker compose --env-file .env.distributed \
+  -f docker-compose.distributed.yml \
+  --profile node1 --profile node2 up -d
 ```
 
-Untuk mode distributed, isi `BLOCKSCOUT_PUBLIC_HOST` di `.env.distributed` pada mesin yang menjalankan `node1`.
+Untuk mode distributed, isi `BLOCKSCOUT_FRONTEND_PUBLIC_HOST` di `.env.distributed` pada mesin yang menjalankan `node1` jika domain bukan `blockscout.denis.my.id`.
 
 Person B:
 
