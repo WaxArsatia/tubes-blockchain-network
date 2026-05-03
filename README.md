@@ -179,7 +179,7 @@ docker compose --env-file .env.distributed \
 
 Untuk mode distributed, isi `BLOCKSCOUT_FRONTEND_PUBLIC_HOST` di `.env.distributed` pada mesin yang menjalankan `node1` jika domain bukan `blockscout.denis.my.id`.
 
-Jika browser console masih menunjukkan request ke `http://localhost:3000/api/...`, recreate container frontend dan proxy setelah mengubah env:
+Jika browser console masih menunjukkan request ke host lama atau path ganda seperti `/api/api/v2/...`, recreate container frontend dan proxy setelah mengubah env:
 
 ```bash
 docker compose --env-file .env.distributed \
