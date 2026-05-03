@@ -1,0 +1,5 @@
+.env.distributed
+config/networkFiles/
+config/nodes/
+config/static-nodes.json
+config/static-nodes-distributed.json

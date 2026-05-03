@@ -1,0 +1,267 @@
+# ============================================================
+#  Besu QBFT Distributed Validators over WireGuard
+#
+#  Usage:
+#    docker compose --env-file .env.distributed \
+#      -f docker-compose.distributed.yml \
+#      --profile node1 --profile node2 up -d
+# ============================================================
+
+name: besu-qbft-distributed
+
+volumes:
+  node1-data:
+  node2-data:
+  node3-data:
+  node4-data:
+  node5-data:
+  postgres-data:
+
+x-besu-distributed-common: &besu-distributed-common
+  image: hyperledger/besu:${BESU_VERSION:-26.4.0}
+  restart: unless-stopped
+  stop_grace_period: 2m
+  network_mode: host
+  healthcheck:
+    test: ["CMD-SHELL", "bash -ec ': > /dev/tcp/127.0.0.1/$${BESU_RPC_HTTP_PORT}'"]
+    interval: 10s
+    timeout: 5s
+    retries: 12
+    start_period: 30s
+
+services:
+  node1:
+    <<: *besu-distributed-common
+    profiles: ["node1"]
+    container_name: besu-node1
+    hostname: node1
+    environment:
+      BESU_RPC_HTTP_PORT: ${NODE1_RPC_HTTP_PORT:-8545}
+    volumes:
+      - node1-data:/data
+      - ./config/networkFiles/genesis.json:/config/genesis.json:ro
+      - ./config/nodes/node1/key:/config/key:ro
+      - ./config/static-nodes-distributed.json:/config/static-nodes.json:ro
+    command:
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/key
+      - --static-nodes-file=/config/static-nodes.json
+      - --discovery-enabled=false
+      - --rpc-http-enabled=true
+      - --rpc-http-host=127.0.0.1
+      - --rpc-http-port=${NODE1_RPC_HTTP_PORT:-8545}
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL,ADMIN,TRACE
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=127.0.0.1
+      - --rpc-ws-port=${NODE1_RPC_WS_PORT:-8546}
+      - --rpc-ws-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL
+      - --p2p-port=${NODE1_P2P_PORT:-30303}
+      - --p2p-host=${NODE1_HOST}
+      - --host-allowlist=localhost,127.0.0.1
+      - --min-gas-price=1000
+      - --revert-reason-enabled=true
+      - --logging=INFO
+
+  node2:
+    <<: *besu-distributed-common
+    profiles: ["node2"]
+    container_name: besu-node2
+    hostname: node2
+    environment:
+      BESU_RPC_HTTP_PORT: ${NODE2_RPC_HTTP_PORT:-8547}
+    volumes:
+      - node2-data:/data
+      - ./config/networkFiles/genesis.json:/config/genesis.json:ro
+      - ./config/nodes/node2/key:/config/key:ro
+      - ./config/static-nodes-distributed.json:/config/static-nodes.json:ro
+    command:
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/key
+      - --static-nodes-file=/config/static-nodes.json
+      - --discovery-enabled=false
+      - --rpc-http-enabled=true
+      - --rpc-http-host=127.0.0.1
+      - --rpc-http-port=${NODE2_RPC_HTTP_PORT:-8547}
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL,ADMIN
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=127.0.0.1
+      - --rpc-ws-port=${NODE2_RPC_WS_PORT:-8548}
+      - --p2p-port=${NODE2_P2P_PORT:-30304}
+      - --p2p-host=${NODE2_HOST}
+      - --host-allowlist=localhost,127.0.0.1
+      - --min-gas-price=1000
+      - --revert-reason-enabled=true
+      - --logging=INFO
+
+  node3:
+    <<: *besu-distributed-common
+    profiles: ["node3"]
+    container_name: besu-node3
+    hostname: node3
+    environment:
+      BESU_RPC_HTTP_PORT: ${NODE3_RPC_HTTP_PORT:-8549}
+    volumes:
+      - node3-data:/data
+      - ./config/networkFiles/genesis.json:/config/genesis.json:ro
+      - ./config/nodes/node3/key:/config/key:ro
+      - ./config/static-nodes-distributed.json:/config/static-nodes.json:ro
+    command:
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/key
+      - --static-nodes-file=/config/static-nodes.json
+      - --discovery-enabled=false
+      - --rpc-http-enabled=true
+      - --rpc-http-host=127.0.0.1
+      - --rpc-http-port=${NODE3_RPC_HTTP_PORT:-8549}
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL,ADMIN
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=127.0.0.1
+      - --rpc-ws-port=${NODE3_RPC_WS_PORT:-8550}
+      - --p2p-port=${NODE3_P2P_PORT:-30305}
+      - --p2p-host=${NODE3_HOST}
+      - --host-allowlist=localhost,127.0.0.1
+      - --min-gas-price=1000
+      - --revert-reason-enabled=true
+      - --logging=INFO
+
+  node4:
+    <<: *besu-distributed-common
+    profiles: ["node4"]
+    container_name: besu-node4
+    hostname: node4
+    environment:
+      BESU_RPC_HTTP_PORT: ${NODE4_RPC_HTTP_PORT:-8551}
+    volumes:
+      - node4-data:/data
+      - ./config/networkFiles/genesis.json:/config/genesis.json:ro
+      - ./config/nodes/node4/key:/config/key:ro
+      - ./config/static-nodes-distributed.json:/config/static-nodes.json:ro
+    command:
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/key
+      - --static-nodes-file=/config/static-nodes.json
+      - --discovery-enabled=false
+      - --rpc-http-enabled=true
+      - --rpc-http-host=127.0.0.1
+      - --rpc-http-port=${NODE4_RPC_HTTP_PORT:-8551}
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL,ADMIN
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=127.0.0.1
+      - --rpc-ws-port=${NODE4_RPC_WS_PORT:-8552}
+      - --p2p-port=${NODE4_P2P_PORT:-30306}
+      - --p2p-host=${NODE4_HOST}
+      - --host-allowlist=localhost,127.0.0.1
+      - --min-gas-price=1000
+      - --revert-reason-enabled=true
+      - --logging=INFO
+
+  node5:
+    <<: *besu-distributed-common
+    profiles: ["node5"]
+    container_name: besu-node5
+    hostname: node5
+    environment:
+      BESU_RPC_HTTP_PORT: ${NODE5_RPC_HTTP_PORT:-8553}
+    volumes:
+      - node5-data:/data
+      - ./config/networkFiles/genesis.json:/config/genesis.json:ro
+      - ./config/nodes/node5/key:/config/key:ro
+      - ./config/static-nodes-distributed.json:/config/static-nodes.json:ro
+    command:
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/key
+      - --static-nodes-file=/config/static-nodes.json
+      - --discovery-enabled=false
+      - --rpc-http-enabled=true
+      - --rpc-http-host=127.0.0.1
+      - --rpc-http-port=${NODE5_RPC_HTTP_PORT:-8553}
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL,ADMIN
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=127.0.0.1
+      - --rpc-ws-port=${NODE5_RPC_WS_PORT:-8554}
+      - --p2p-port=${NODE5_P2P_PORT:-30307}
+      - --p2p-host=${NODE5_HOST}
+      - --host-allowlist=localhost,127.0.0.1
+      - --min-gas-price=1000
+      - --revert-reason-enabled=true
+      - --logging=INFO
+
+  # ── PostgreSQL (Blockscout DB; runs with node1 owner) ───
+  postgres:
+    image: postgres:${POSTGRES_VERSION:-18-alpine}
+    profiles: ["node1"]
+    container_name: blockscout-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: blockscout
+      POSTGRES_PASSWORD: blockscout
+      POSTGRES_DB: blockscout
+      PGDATA: /var/lib/postgresql/18/docker
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test:
+        ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  # ── Blockscout Explorer (runs with node1 owner) ──────────
+  blockscout:
+    image: ghcr.io/blockscout/blockscout:${BLOCKSCOUT_VERSION:-latest}
+    profiles: ["node1"]
+    container_name: blockscout
+    pull_policy: always
+    restart: unless-stopped
+    network_mode: host
+    depends_on:
+      postgres:
+        condition: service_healthy
+      node1:
+        condition: service_healthy
+    environment:
+      # ── RPC ──
+      ETHEREUM_JSONRPC_VARIANT: besu
+      ETHEREUM_JSONRPC_HTTP_URL: http://127.0.0.1:${NODE1_RPC_HTTP_PORT:-8545}
+      ETHEREUM_JSONRPC_WS_URL: ws://127.0.0.1:${NODE1_RPC_WS_PORT:-8546}
+      ETHEREUM_JSONRPC_TRACE_URL: http://127.0.0.1:${NODE1_RPC_HTTP_PORT:-8545}
+      # ── DB ──
+      DATABASE_URL: postgresql://blockscout:blockscout@127.0.0.1:${POSTGRES_PORT:-5432}/blockscout
+      ECTO_USE_SSL: "false"
+      # ── App ──
+      SECRET_KEY_BASE: "c6f4c1f34b9b0e2d4bc01be0ac028b33fc8ead1fcb81f3cf"
+      CHECK_ORIGIN: "false"
+      PORT: ${BLOCKSCOUT_PORT:-4000}
+      MIX_ENV: prod
+      CHAIN_ID: "1337"
+      NETWORK: "Besu Private"
+      SUBNETWORK: "QBFT Distributed"
+      LOGO: "/images/blockscout_logo.svg"
+      LOGO_FOOTER: "/images/blockscout_logo.svg"
+      # ── Features ──
+      SHOW_PRICE_CHART: "false"
+      DISABLE_EXCHANGE_RATES: "true"
+      POOL_SIZE: "10"
+      POOL_SIZE_API: "10"
+      ECTO_NUMBER_OF_MIGRATIONS_LOCK_RETRIES: "60"
+    command: sh -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -fsS http://127.0.0.1:$${PORT}/api/v2/stats >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 2m

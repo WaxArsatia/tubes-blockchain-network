@@ -1,0 +1,291 @@
+# ============================================================
+#  Besu QBFT 5-Node Private Network + Blockscout Explorer
+#  Chain ID : 1337
+#  Consensus: QBFT (Proof of Authority)
+# ============================================================
+
+name: besu-qbft-local
+
+networks:
+  besu-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+volumes:
+  node1-data:
+  node2-data:
+  node3-data:
+  node4-data:
+  node5-data:
+  postgres-data:
+
+# ── Shared Besu config (YAML anchor) ──────────────────────
+x-besu-common: &besu-common
+  image: hyperledger/besu:${BESU_VERSION:-26.4.0}
+  restart: unless-stopped
+  stop_grace_period: 2m
+  networks:
+    - besu-net
+  healthcheck:
+    test: ["CMD-SHELL", "bash -ec ': > /dev/tcp/127.0.0.1/8545'"]
+    interval: 10s
+    timeout: 5s
+    retries: 12
+    start_period: 30s
+
+services:
+  # ── Node 1 (Validator + RPC primary) ────────────────────
+  node1:
+    <<: *besu-common
+    container_name: besu-node1
+    hostname: node1
+    volumes:
+      - node1-data:/data
+      - ./config/networkFiles/genesis.json:/config/genesis.json:ro
+      - ./config/nodes/node1/key:/config/key:ro
+      - ./config/static-nodes.json:/config/static-nodes.json:ro
+    command:
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/key
+      - --static-nodes-file=/config/static-nodes.json
+      - --rpc-http-enabled=true
+      - --rpc-http-host=0.0.0.0
+      - --rpc-http-port=8545
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL,ADMIN,TRACE
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=0.0.0.0
+      - --rpc-ws-port=8546
+      - --rpc-ws-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL
+      - --p2p-port=30303
+      - --p2p-host=172.20.0.11
+      - --host-allowlist=*
+      - --min-gas-price=1000
+      - --revert-reason-enabled=true
+      - --logging=INFO
+    ports:
+      - "8545:8545" # HTTP RPC
+      - "8546:8546" # WebSocket RPC
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.11
+
+  # ── Node 2 (Validator) ───────────────────────────────────
+  node2:
+    <<: *besu-common
+    container_name: besu-node2
+    hostname: node2
+    volumes:
+      - node2-data:/data
+      - ./config/networkFiles/genesis.json:/config/genesis.json:ro
+      - ./config/nodes/node2/key:/config/key:ro
+      - ./config/static-nodes.json:/config/static-nodes.json:ro
+    command:
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/key
+      - --static-nodes-file=/config/static-nodes.json
+      - --rpc-http-enabled=true
+      - --rpc-http-host=0.0.0.0
+      - --rpc-http-port=8545
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL,ADMIN
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=0.0.0.0
+      - --rpc-ws-port=8546
+      - --p2p-port=30303
+      - --p2p-host=172.20.0.12
+      - --host-allowlist=*
+      - --min-gas-price=1000
+      - --revert-reason-enabled=true
+      - --logging=INFO
+    ports:
+      - "8547:8545" # HTTP RPC
+      - "8548:8546" # WebSocket RPC
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.12
+
+  # ── Node 3 (Validator) ───────────────────────────────────
+  node3:
+    <<: *besu-common
+    container_name: besu-node3
+    hostname: node3
+    volumes:
+      - node3-data:/data
+      - ./config/networkFiles/genesis.json:/config/genesis.json:ro
+      - ./config/nodes/node3/key:/config/key:ro
+      - ./config/static-nodes.json:/config/static-nodes.json:ro
+    command:
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/key
+      - --static-nodes-file=/config/static-nodes.json
+      - --rpc-http-enabled=true
+      - --rpc-http-host=0.0.0.0
+      - --rpc-http-port=8545
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL,ADMIN
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=0.0.0.0
+      - --rpc-ws-port=8546
+      - --p2p-port=30303
+      - --p2p-host=172.20.0.13
+      - --host-allowlist=*
+      - --min-gas-price=1000
+      - --revert-reason-enabled=true
+      - --logging=INFO
+    ports:
+      - "8549:8545" # HTTP RPC
+      - "8550:8546" # WebSocket RPC
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.13
+
+  # ── Node 4 (Validator) ───────────────────────────────────
+  node4:
+    <<: *besu-common
+    container_name: besu-node4
+    hostname: node4
+    volumes:
+      - node4-data:/data
+      - ./config/networkFiles/genesis.json:/config/genesis.json:ro
+      - ./config/nodes/node4/key:/config/key:ro
+      - ./config/static-nodes.json:/config/static-nodes.json:ro
+    command:
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/key
+      - --static-nodes-file=/config/static-nodes.json
+      - --rpc-http-enabled=true
+      - --rpc-http-host=0.0.0.0
+      - --rpc-http-port=8545
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL,ADMIN
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=0.0.0.0
+      - --rpc-ws-port=8546
+      - --p2p-port=30303
+      - --p2p-host=172.20.0.14
+      - --host-allowlist=*
+      - --min-gas-price=1000
+      - --revert-reason-enabled=true
+      - --logging=INFO
+    ports:
+      - "8551:8545" # HTTP RPC
+      - "8552:8546" # WebSocket RPC
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.14
+
+  # ── Node 5 (Validator) ───────────────────────────────────
+  node5:
+    <<: *besu-common
+    container_name: besu-node5
+    hostname: node5
+    volumes:
+      - node5-data:/data
+      - ./config/networkFiles/genesis.json:/config/genesis.json:ro
+      - ./config/nodes/node5/key:/config/key:ro
+      - ./config/static-nodes.json:/config/static-nodes.json:ro
+    command:
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/key
+      - --static-nodes-file=/config/static-nodes.json
+      - --rpc-http-enabled=true
+      - --rpc-http-host=0.0.0.0
+      - --rpc-http-port=8545
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,DEBUG,TXPOOL,ADMIN
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=0.0.0.0
+      - --rpc-ws-port=8546
+      - --p2p-port=30303
+      - --p2p-host=172.20.0.15
+      - --host-allowlist=*
+      - --min-gas-price=1000
+      - --revert-reason-enabled=true
+      - --logging=INFO
+    ports:
+      - "8553:8545" # HTTP RPC
+      - "8554:8546" # WebSocket RPC
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.15
+
+  # ── PostgreSQL (Blockscout DB) ───────────────────────────
+  postgres:
+    image: postgres:${POSTGRES_VERSION:-18-alpine}
+    container_name: blockscout-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: blockscout
+      POSTGRES_PASSWORD: blockscout
+      POSTGRES_DB: blockscout
+      PGDATA: /var/lib/postgresql/18/docker
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.20
+    healthcheck:
+      test:
+        ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  # ── Blockscout Explorer ──────────────────────────────────
+  blockscout:
+    image: ghcr.io/blockscout/blockscout:${BLOCKSCOUT_VERSION:-latest}
+    container_name: blockscout
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      node1:
+        condition: service_healthy
+    environment:
+      # ── RPC ──
+      ETHEREUM_JSONRPC_VARIANT: besu
+      ETHEREUM_JSONRPC_HTTP_URL: http://node1:8545
+      ETHEREUM_JSONRPC_WS_URL: ws://node1:8546
+      ETHEREUM_JSONRPC_TRACE_URL: http://node1:8545
+      # ── DB ──
+      DATABASE_URL: postgresql://blockscout:blockscout@postgres:5432/blockscout
+      ECTO_USE_SSL: "false"
+      # ── App ──
+      SECRET_KEY_BASE: "c6f4c1f34b9b0e2d4bc01be0ac028b33fc8ead1fcb81f3cf"
+      CHECK_ORIGIN: "false"
+      PORT: 4000
+      MIX_ENV: prod
+      CHAIN_ID: "1337"
+      NETWORK: "Besu Private"
+      SUBNETWORK: "QBFT Local"
+      LOGO: "/images/blockscout_logo.svg"
+      LOGO_FOOTER: "/images/blockscout_logo.svg"
+      # ── Features ──
+      SHOW_PRICE_CHART: "false"
+      DISABLE_EXCHANGE_RATES: "true"
+      POOL_SIZE: "10"
+      POOL_SIZE_API: "10"
+      ECTO_NUMBER_OF_MIGRATIONS_LOCK_RETRIES: "60"
+    command: sh -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"
+    ports:
+      - "4000:4000"
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.30
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -fsS http://localhost:4000/api/v2/stats >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 2m
