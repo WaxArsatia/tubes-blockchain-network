@@ -8,6 +8,13 @@ server {
   server_name _;
   proxy_http_version 1.1;
 
+  # Cloudflare Rocket Loader rewrites deferred Next.js scripts unless they are
+  # explicitly excluded. The LAN path bypasses Cloudflare, so keep origin HTML
+  # explicit for the public HTTPS hostname.
+  sub_filter_once off;
+  sub_filter '<script src=' '<script data-cfasync="false" src=';
+  sub_filter '<script defer=' '<script data-cfasync="false" defer=';
+
   location ~ ^/(api|socket|sitemap.xml|auth/auth0|auth/auth0/callback|auth/logout) {
     proxy_pass ${BACK_PROXY_PASS};
     proxy_http_version 1.1;
