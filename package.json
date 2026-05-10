@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "redeploy": "node scripts/redeploy-all.js",
+    "verify:deployed": "node scripts/verify-deployed.js"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.0.0",
