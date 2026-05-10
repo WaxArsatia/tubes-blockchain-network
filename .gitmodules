@@ -1,0 +1,3 @@
+[submodule "tubes-blockchain-fe"]
+	path = tubes-blockchain-fe
+	url = git@github.com:WaxArsatia/tubes-blockchain-fe.git
