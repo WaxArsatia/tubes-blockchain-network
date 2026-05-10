@@ -348,3 +348,7 @@ rm -rf config/networkFiles config/nodes config/static-nodes.json
 ./setup.sh
 docker compose up -d
 ```
+
+---
+
+Node 1 is fully running and deployed, available on IP 45.126.40.107
