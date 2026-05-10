@@ -19,6 +19,7 @@ volumes:
   node3-data:
   node4-data:
   node5-data:
+  ipfs-data:
   postgres-data:
 
 x-besu-distributed-common: &besu-distributed-common
@@ -199,6 +200,39 @@ services:
       - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
+
+  # ── IPFS Kubo (runs only on node1 owner) ─────────────────
+  ipfs:
+    image: ipfs/kubo:${KUBO_VERSION:-latest}
+    profiles: ["node1"]
+    container_name: ipfs-kubo
+    restart: unless-stopped
+    environment:
+      IPFS_API_ORIGIN: ${IPFS_API_ORIGIN:-http://localhost:5173}
+    volumes:
+      - ipfs-data:/data/ipfs
+    ports:
+      - "${IPFS_API_PORT:-5001}:5001"
+      - "${IPFS_GATEWAY_PORT:-8080}:8080"
+      - "${IPFS_SWARM_PORT:-4001}:4001/tcp"
+      - "${IPFS_SWARM_PORT:-4001}:4001/udp"
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        ipfs init --profile=server || true
+        ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
+        ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"$${IPFS_API_ORIGIN}\",\"http://127.0.0.1:5173\"]"
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT","POST","GET"]'
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Headers '["Authorization","Content-Type"]'
+        exec ipfs daemon --migrate=true
+    healthcheck:
+      test: ["CMD-SHELL", "ipfs id >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
 
   # ── PostgreSQL (Blockscout DB; runs with node1 owner) ───
   postgres:

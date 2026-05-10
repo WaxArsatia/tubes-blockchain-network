@@ -62,6 +62,18 @@ curl -s http://localhost:8545 \
   --data '{"jsonrpc":"2.0","method":"qbft_getValidatorsByBlockNumber","params":["latest"],"id":1}'
 ```
 
+### Cek IPFS Kubo
+
+```bash
+curl -s -X POST http://127.0.0.1:5001/api/v0/id
+```
+
+Gateway lokal tersedia di:
+
+```text
+http://127.0.0.1:8080/ipfs/<cid>
+```
+
 ### 4. Hentikan Network
 
 ```bash
@@ -82,6 +94,8 @@ docker compose down -v       # stop + hapus semua data (reset total)
 | **Node 4 RPC**           | http://localhost:8551 |
 | **Node 5 RPC**           | http://localhost:8553 |
 | **Node 1 WS**            | ws://localhost:8546   |
+| **IPFS Kubo API**        | http://<host-ip>:5001 |
+| **IPFS Gateway**         | http://<host-ip>:8080 |
 
 ---
 
@@ -151,7 +165,7 @@ RPC dan WebSocket hanya bind ke `127.0.0.1` di masing-masing mesin, jadi tidak t
 
 ### 4. Jalankan validator sesuai ownership
 
-Person A, pemilik `node1`, juga otomatis menjalankan PostgreSQL dan Blockscout:
+Person A, pemilik `node1`, juga otomatis menjalankan PostgreSQL, Blockscout, dan IPFS Kubo:
 
 ```bash
 docker compose --env-file .env.distributed \
@@ -163,6 +177,13 @@ Blockscout tersedia di mesin Person A. Default frontend diset untuk domain testi
 
 ```text
 http://blockscout.denis.my.id
+```
+
+IPFS Kubo juga tersedia di mesin Person A saja:
+
+```text
+Kubo API:     http://<ip-host-node1>:5001
+Kubo Gateway: http://<ip-host-node1>:8080
 ```
 
 Jika dibuka dari perangkat lain lewat IP LAN atau WireGuard dengan IP berbeda, set host publik frontend sebelum menjalankan Compose:
