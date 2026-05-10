@@ -207,8 +207,6 @@ services:
     profiles: ["node1"]
     container_name: ipfs-kubo
     restart: unless-stopped
-    environment:
-      IPFS_API_ORIGIN: ${IPFS_API_ORIGIN:-http://localhost:5173}
     volumes:
       - ipfs-data:/data/ipfs
     ports:
@@ -223,8 +221,8 @@ services:
         ipfs init --profile=server || true
         ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
         ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
-        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"$${IPFS_API_ORIGIN}\",\"http://127.0.0.1:5173\"]"
-        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT","POST","GET"]'
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT","POST","GET","OPTIONS"]'
         ipfs config --json API.HTTPHeaders.Access-Control-Allow-Headers '["Authorization","Content-Type"]'
         exec ipfs daemon --migrate=true
     healthcheck:

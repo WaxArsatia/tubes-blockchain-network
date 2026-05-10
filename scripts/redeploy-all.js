@@ -7,8 +7,8 @@ const { buildVerificationTargets, verifyTargets } = require("./verify-deployed")
 
 const defaultRpcUrl = "http://45.126.40.107:8545"
 const defaultBlockscoutUrl = "https://blockscout.denis.my.id"
-const defaultIpfsApiUrl = "http://45.126.40.107:5001"
-const defaultIpfsGatewayUrl = "http://45.126.40.107:8080/ipfs"
+const defaultIpfsApiUrl = "https://ipfs-api.denis.my.id"
+const defaultIpfsGatewayUrl = "https://ipfs-gateway.denis.my.id/ipfs"
 const defaultFrontendEnvPath = path.join("tubes-blockchain-fe", ".env.local")
 
 function usage() {
@@ -22,8 +22,8 @@ Optional env:
   RPC_URL=http://45.126.40.107:8545
   FRONTEND_ENV_PATH=tubes-blockchain-fe/.env.local
   VITE_BLOCKSCOUT_URL=https://blockscout.denis.my.id
-  VITE_IPFS_API_URL=http://45.126.40.107:5001
-  VITE_IPFS_GATEWAY_URL=http://45.126.40.107:8080/ipfs
+  VITE_IPFS_API_URL=https://ipfs-api.denis.my.id
+  VITE_IPFS_GATEWAY_URL=https://ipfs-gateway.denis.my.id/ipfs
   VITE_INSTITUTION_SALT=bpjs-remote-acceptance
   HARDHAT_VERIFY_NETWORK=besu-private
   SKIP_VERIFY=1
