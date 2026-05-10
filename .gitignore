@@ -1,4 +1,9 @@
 .env.distributed
+node_modules/
+artifacts/
+cache/
+coverage/
+typechain-types/
 config/networkFiles/
 config/nodes/
 config/static-nodes.json
