@@ -63,7 +63,7 @@ services:
       - --p2p-port=30303
       - --p2p-host=172.20.0.11
       - --host-allowlist=*
-      - --min-gas-price=1000
+      - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
     ports:
@@ -99,7 +99,7 @@ services:
       - --p2p-port=30303
       - --p2p-host=172.20.0.12
       - --host-allowlist=*
-      - --min-gas-price=1000
+      - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
     ports:
@@ -135,7 +135,7 @@ services:
       - --p2p-port=30303
       - --p2p-host=172.20.0.13
       - --host-allowlist=*
-      - --min-gas-price=1000
+      - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
     ports:
@@ -171,7 +171,7 @@ services:
       - --p2p-port=30303
       - --p2p-host=172.20.0.14
       - --host-allowlist=*
-      - --min-gas-price=1000
+      - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
     ports:
@@ -207,7 +207,7 @@ services:
       - --p2p-port=30303
       - --p2p-host=172.20.0.15
       - --host-allowlist=*
-      - --min-gas-price=1000
+      - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
     ports:

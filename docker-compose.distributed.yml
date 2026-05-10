@@ -64,7 +64,7 @@ services:
       - --p2p-port=${NODE1_P2P_PORT:-30303}
       - --p2p-host=${NODE1_HOST}
       - --host-allowlist=localhost,127.0.0.1
-      - --min-gas-price=1000
+      - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
 
@@ -97,7 +97,7 @@ services:
       - --p2p-port=${NODE2_P2P_PORT:-30304}
       - --p2p-host=${NODE2_HOST}
       - --host-allowlist=localhost,127.0.0.1
-      - --min-gas-price=1000
+      - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
 
@@ -130,7 +130,7 @@ services:
       - --p2p-port=${NODE3_P2P_PORT:-30305}
       - --p2p-host=${NODE3_HOST}
       - --host-allowlist=localhost,127.0.0.1
-      - --min-gas-price=1000
+      - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
 
@@ -163,7 +163,7 @@ services:
       - --p2p-port=${NODE4_P2P_PORT:-30306}
       - --p2p-host=${NODE4_HOST}
       - --host-allowlist=localhost,127.0.0.1
-      - --min-gas-price=1000
+      - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
 
@@ -196,7 +196,7 @@ services:
       - --p2p-port=${NODE5_P2P_PORT:-30307}
       - --p2p-host=${NODE5_HOST}
       - --host-allowlist=localhost,127.0.0.1
-      - --min-gas-price=1000
+      - --min-gas-price=0
       - --revert-reason-enabled=true
       - --logging=INFO
 

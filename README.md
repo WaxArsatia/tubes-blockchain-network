@@ -314,7 +314,7 @@ besu-network/
 | **Hardfork**        | Prague                     |
 | **Block Period**    | 2 detik                    |
 | **Gas Limit**       | 30,000,000 gas per block   |
-| **Min Gas Price**   | 1,000 wei                  |
+| **Min Gas Price**   | 0 wei                      |
 | **Fault Tolerance** | 1 node boleh down (dari 5) |
 
 ---
