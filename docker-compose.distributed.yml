@@ -221,7 +221,7 @@ services:
         ipfs init --profile=server || true
         ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
         ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
-        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '${IPFS_API_ORIGINS_JSON:-["http://localhost:5173","http://127.0.0.1:5173","https://bpjs.denis.my.id"]}'
         ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT","POST","GET","OPTIONS"]'
         ipfs config --json API.HTTPHeaders.Access-Control-Allow-Headers '["Authorization","Content-Type"]'
         exec ipfs daemon --migrate=true
