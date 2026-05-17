@@ -81,6 +81,28 @@ docker compose down          # stop, data tetap ada
 docker compose down -v       # stop + hapus semua data (reset total)
 ```
 
+### Fresh clean server lokal
+
+Untuk server yang menjalankan `docker-compose.yml` lokal, gunakan script ini untuk stop service, hapus container/volume/network terkait stack lokal, dan hapus generated validator config:
+
+```bash
+scripts/fresh-clean-local.sh
+```
+
+Untuk langsung regenerate genesis/key dan menjalankan ulang stack:
+
+```bash
+scripts/fresh-clean-local.sh --yes --start
+```
+
+Jika ingin sekaligus backup dan hapus env frontend lama karena kontrak akan redeploy dari nol:
+
+```bash
+scripts/fresh-clean-local.sh --yes --start --clean-frontend-env
+```
+
+Script ini tidak memakai `docker-compose.distributed.yml`.
+
 ---
 
 ## 🌐 Endpoints
