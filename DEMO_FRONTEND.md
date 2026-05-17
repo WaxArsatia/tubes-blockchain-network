@@ -100,37 +100,44 @@ Masuk sebagai Faskes, lalu buka workspace **Faskes**.
    - metadata record tersimpan on-chain,
    - DEK sementara muncul di frontend.
 
-## 6. Demo Pasien
+## 6. Demo Request Akses
+
+Masuk sebagai Auditor atau wallet requester, lalu buka workspace **Akses**.
+
+1. Tunjukkan daftar **Record tersedia**.
+2. Isi **Record ID** dan durasi akses.
+3. Klik **Request akses**.
+4. Setelah transaksi terkonfirmasi, tunjukkan request muncul di **Request saya**.
+
+## 7. Demo Pasien
 
 Masuk sebagai Pasien, lalu buka workspace **Pasien**.
 
 1. Tunjukkan tabel **Rekam medis saya**.
-2. Jika ada permintaan akses, gunakan:
+2. Pada permintaan akses masuk, gunakan:
    - **Approve** untuk menyetujui,
    - **Reject** untuk menolak,
    - **Revoke** untuk mencabut akses.
 
-## 7. Demo Approval Faskes
+## 8. Demo Approval Faskes
 
 Masuk lagi sebagai Faskes.
 
 1. Buka tabel **Permintaan untuk record faskes**.
 2. Klik **Approve** atau **Reject**.
-3. Setelah pasien dan faskes approve, isi **Submit wrapped DEK**:
-   - Request ID,
-   - DEK,
-   - public key requester.
-4. Klik **Submit wrapped DEK**.
+3. Setelah pasien dan faskes approve, isi **Request ID** di **Submit wrapped DEK**.
+4. Klik **Submit wrapped DEK otomatis**.
+5. Tunjukkan status request berubah menjadi **Granted**.
 
-## 8. Demo Auditor
+## 9. Demo Auditor
 
 Masuk sebagai Auditor, lalu buka workspace **Auditor**.
 
 1. Tunjukkan metadata record.
 2. Tunjukkan metadata akses.
-3. Jelaskan bahwa auditor tidak mendapat bypass plaintext.
+3. Jelaskan bahwa auditor tetap tidak mendapat bypass plaintext.
 
-## 9. Demo Dekripsi
+## 10. Demo Dekripsi
 
 Masuk sebagai wallet requester yang sudah mendapat akses.
 
@@ -144,7 +151,8 @@ Masuk sebagai wallet requester yang sudah mendapat akses.
 
 ## Catatan Demo
 
-- Frontend belum menyediakan tombol untuk membuat `requestAccess`.
-- Untuk mendemokan approval dan dekripsi, buat request akses terlebih dahulu lewat kontrak/script.
-- Jika role belum muncul, refresh halaman atau sambungkan ulang MetaMask.
+- `requestAccess` sudah tersedia dari workspace **Akses**.
+- Approval, submit wrapped DEK, dan dekripsi sudah bisa dilakukan dari frontend tanpa script atau panggilan kontrak manual.
+- Public key requester dibaca otomatis dari `BPJSRegistry`; requester tetap harus membuat dan meregistrasikan kunci dari tombol **Kunci**.
+- Jika role atau event terbaru belum muncul, klik tombol refresh di header.
 - Jika transaksi gagal, cek network MetaMask, alamat kontrak `.env.local`, dan koneksi IPFS.
