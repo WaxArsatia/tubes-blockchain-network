@@ -9,6 +9,7 @@ const defaultRpcUrl = "http://45.126.40.107:8545"
 const defaultBlockscoutUrl = "https://blockscout.denis.my.id"
 const defaultIpfsApiUrl = "https://ipfs-api.denis.my.id"
 const defaultIpfsGatewayUrl = "https://ipfs-gateway.denis.my.id/ipfs"
+const defaultLogBlockRange = "100"
 const defaultFrontendEnvPath = path.join("tubes-blockchain-fe", ".env.local")
 
 function usage() {
@@ -25,6 +26,7 @@ Optional env:
   VITE_IPFS_API_URL=https://ipfs-api.denis.my.id
   VITE_IPFS_GATEWAY_URL=https://ipfs-gateway.denis.my.id/ipfs
   VITE_INSTITUTION_SALT=bpjs-remote-acceptance
+  VITE_LOG_BLOCK_RANGE=100
   HARDHAT_VERIFY_NETWORK=besu-private
   SKIP_VERIFY=1
 `)
@@ -78,6 +80,7 @@ function writeFrontendEnv(values) {
     `VITE_IPFS_GATEWAY_URL=${values.ipfsGatewayUrl}`,
     `VITE_INSTITUTION_SALT=${values.institutionSalt}`,
     `VITE_DEPLOYMENT_START_BLOCK=${values.startBlock}`,
+    `VITE_LOG_BLOCK_RANGE=${values.logBlockRange}`,
     `VITE_BPJS_REGISTRY_ADDRESS=${values.registry}`,
     `VITE_MEDICAL_RECORD_ADDRESS=${values.medicalRecord}`,
     `VITE_ACCESS_MANAGER_ADDRESS=${values.accessManager}`,
@@ -118,6 +121,7 @@ async function main() {
     ipfsApiUrl: process.env.VITE_IPFS_API_URL || defaultIpfsApiUrl,
     ipfsGatewayUrl: process.env.VITE_IPFS_GATEWAY_URL || defaultIpfsGatewayUrl,
     institutionSalt: process.env.VITE_INSTITUTION_SALT || "bpjs-remote-acceptance",
+    logBlockRange: process.env.VITE_LOG_BLOCK_RANGE || defaultLogBlockRange,
     startBlock,
     registry,
     medicalRecord,
